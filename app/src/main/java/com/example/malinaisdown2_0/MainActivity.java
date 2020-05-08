@@ -87,20 +87,4 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
-
-
-
-
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        addListenerOnButton ();
-//        add2ListenerOnButton ();
-//
-//    }
-//
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
 }

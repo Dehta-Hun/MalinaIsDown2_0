@@ -1,6 +1,8 @@
 package com.example.malinaisdown2_0.ui.gallery;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,8 +31,8 @@ public class ControlFragment extends Fragment{
     private Session session;
     private JSch jsch;
     private ChannelExec channelssh;
-    private String command;
-    private String question;
+    private String command, question, login, ip, pass;
+    public SharedPreferences pref_login, pref_ip, pref_pass;
 
     private ControlViewModel controlViewModel;
 
@@ -47,6 +49,9 @@ public class ControlFragment extends Fragment{
         btn_reboot.setOnClickListener(myRebootListener);
 
         return controlView;
+
+        pref_login = this.getActivity().getPreferences(Context.MODE_PRIVATE);
+        login = pref_login.getString(stringlogin, "");
     }
 
     View.OnClickListener myShutdownListener = new View.OnClickListener() {

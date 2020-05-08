@@ -12,4 +12,10 @@
     <string name="menu_slideshow">Slideshow</string>
 
     <string name="home_second">Home Second</string>
+
+    <string name="string_login">null</string>
+    <string name="string_ip">null</string>
+    <string name="string_password">null</string>
+
+
 </resources>
