@@ -1,34 +1,176 @@
 package com.example.malinaisdown2_0.ui.gallery;
 
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 
 import com.example.malinaisdown2_0.R;
+import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Session;
 
-public class ControlFragment extends Fragment {
-xdsd
-    private ControlViewModel controlViewModel;
+import java.io.ByteArrayOutputStream;
+import java.util.Properties;
+
+public class ControlFragment extends Fragment{
+
+
+    private View controlView;
+    private Button btn_shutdown;
+    private Button btn_reboot;
+    private Session session;
+    private JSch jsch;
+    private ChannelExec channelssh;
+    private String command, question, login, ip, pass;
+
+
+    public static final String APP_PREFERENCES = "mysettings";
+    SharedPreferences mSettings;
+
+    public static final String stringlogin = "saved";
+    public static final String stringip = "ALOLO";
+    public static final String stringpass = "sdsd";
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        controlViewModel =
-                ViewModelProviders.of(this).get(ControlViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_control, container, false);
-//        final TextView textView = root.findViewById(R.id.text_gallery);
-        controlViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-//                textView.setText(s);
-            }
-        });
-        return root;
+
+        controlView = inflater.inflate(R.layout.fragment_control, container, false);
+
+
+        btn_shutdown = controlView.findViewById(R.id.btn_shutdown);
+        btn_shutdown.setOnClickListener(myShutdownListener);
+
+        btn_reboot = controlView.findViewById(R.id.btn_reboot);
+        btn_reboot.setOnClickListener(myRebootListener);
+
+        mSettings = this.getActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        ip = mSettings.getString(stringip, "");
+        login = mSettings.getString(stringlogin, "");
+        pass = mSettings.getString(stringpass, "");
+
+        return controlView;
+
     }
+
+    View.OnClickListener myShutdownListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            question = "ВЫРУБАЕМ НАХ?";
+            command = "sudo shutdown -h now";
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage(question)
+                    .setPositiveButton("DA EBA KANESHNO", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            sshSentCmd(); //Запуск метода отправки команды по ssh
+
+                            Toast.makeText(
+                                    getActivity(), "Ну все, хана малине",
+                                    Toast.LENGTH_LONG
+                            ).show();
+
+                        }
+                    })
+                    .setNegativeButton("NENE ASTANAVIS", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Toast.makeText(
+                                    getActivity(), "Ну как хош братан",
+                                    Toast.LENGTH_LONG
+                            ).show();
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.setTitle("SHO");
+            alert.show();
+
+        }
+    };
+
+    public View.OnClickListener myRebootListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            command = "sudo shutdown -r now";
+            question = "РЕБУТАЕМ НАХ?";
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage(question)
+                    .setPositiveButton("DA EBA KANESHNO", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            sshSentCmd(); //Запуск метода отправки команды по ssh
+
+                            Toast.makeText(
+                                    getActivity(), "Ну все, хана малине",
+                                    Toast.LENGTH_LONG
+                            ).show();
+
+                        }
+                    })
+                    .setNegativeButton("NENE ASTANAVIS", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Toast.makeText(
+                                    getActivity(), "Ну как хош братан",
+                                    Toast.LENGTH_LONG
+                            ).show();
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.setTitle("SHO");
+            alert.show();
+
+        }
+    };
+
+
+    public void sshSentCmd() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                try {
+                    jsch = new JSch();
+                    session = jsch.getSession(login, ip, 22);
+                    session.setPassword(pass);
+
+                    // Avoid asking for key confirmation
+                    Properties prop = new Properties();
+                    prop.put("StrictHostKeyChecking", "no");
+                    session.setConfig(prop);
+
+                    session.connect();
+
+                    channelssh = (ChannelExec) session.openChannel("exec");
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    channelssh.setOutputStream(baos);
+
+                    channelssh.setCommand(command);
+                    channelssh.connect();
+                    channelssh.disconnect();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+    }
+
+
 }
