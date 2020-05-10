@@ -32,9 +32,14 @@ public class ControlFragment extends Fragment{
     private JSch jsch;
     private ChannelExec channelssh;
     private String command, question, login, ip, pass;
-    public SharedPreferences pref_login, pref_ip, pref_pass;
 
-    private ControlViewModel controlViewModel;
+
+    public static final String APP_PREFERENCES = "mysettings";
+    SharedPreferences mSettings;
+
+    public static final String stringlogin = "saved";
+    public static final String stringip = "ALOLO";
+    public static final String stringpass = "sdsd";
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -48,10 +53,13 @@ public class ControlFragment extends Fragment{
         btn_reboot = controlView.findViewById(R.id.btn_reboot);
         btn_reboot.setOnClickListener(myRebootListener);
 
+        mSettings = this.getActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        ip = mSettings.getString(stringip, "");
+        login = mSettings.getString(stringlogin, "");
+        pass = mSettings.getString(stringpass, "");
+
         return controlView;
 
-        pref_login = this.getActivity().getPreferences(Context.MODE_PRIVATE);
-        login = pref_login.getString(stringlogin, "");
     }
 
     View.OnClickListener myShutdownListener = new View.OnClickListener() {
@@ -138,8 +146,8 @@ public class ControlFragment extends Fragment{
 
                 try {
                     jsch = new JSch();
-                    session = jsch.getSession("pi", "192.168.1.3", 22);
-                    session.setPassword("ZvTuJkJk1515");
+                    session = jsch.getSession(login, ip, 22);
+                    session.setPassword(pass);
 
                     // Avoid asking for key confirmation
                     Properties prop = new Properties();

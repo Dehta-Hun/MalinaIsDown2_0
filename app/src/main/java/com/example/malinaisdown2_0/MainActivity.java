@@ -1,51 +1,34 @@
 package com.example.malinaisdown2_0;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.view.View;
 import android.view.Menu;
-import android.widget.Button;
-import android.widget.Toast;
+import android.view.View;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.navigation.NavigationView;
-import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.JSch;
-
-import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
-import java.io.ByteArrayOutputStream;
-import java.util.Properties;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 
-import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button btn_shutdown, btn_reboot;
-    private Session session;
-    private JSch jsch;
-    private ChannelExec channelssh;
-    private String command;
-    private String question;
 
     private AppBarConfiguration mAppBarConfiguration;
 
     @SuppressLint("SourceLockedOrientationActivity")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
