@@ -34,9 +34,9 @@
             app:destination="@id/nav_home_second" />
     </fragment>
 
-    <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.example.malinaisdown2_0.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+<!--    <fragment-->
+<!--        android:id="@+id/nav_slideshow"-->
+<!--        android:name="com.example.malinaisdown2_0.ui.slideshow.SlideshowFragment"-->
+<!--        android:label="@string/menu_slideshow"-->
+<!--\\        tools:layout="@layout/fragment_slideshow" />-->
 </navigation>
