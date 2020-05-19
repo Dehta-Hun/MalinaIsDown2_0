@@ -15,7 +15,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.example.malinaisdown2_0.R;
-import com.example.malinaisdown2_0.ui.Functions;
+import com.example.malinaisdown2_0.Functions;
 
 public class ControlFragment extends Fragment{
 
@@ -53,94 +53,84 @@ public class ControlFragment extends Fragment{
         return controlView;
     }
 
-    public void assignListeners() { //Метод назначающий клик листнер кнопкам
-
-        new Thread(new Runnable() {
+    public void assignListeners() {       //Метод назначающий клик листнер кнопкам
+        View.OnClickListener myShutdownListener = new View.OnClickListener() {
             @Override
-            public void run() {
+            public void onClick(View v) {
+                question = "ВЫРУБАЕМ НАХ?";
+                command = "sudo shutdown -h now";
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage(question)
+                        .setPositiveButton("DA EBA KANESHNO", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
 
-                View.OnClickListener myShutdownListener = new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        question = "ВЫРУБАЕМ НАХ?";
-                        command = "sudo shutdown -h now";
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                        builder.setMessage(question)
-                                .setPositiveButton("DA EBA KANESHNO", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
+                                Functions.sshSentCmd(login, ip, pass, command); //Запуск метода отправки команды по ssh
 
-                                        Functions.sshSentCmd(login, ip, pass, command); //Запуск метода отправки команды по ssh
+                                Toast.makeText(
+                                        getActivity(), "Ну все, хана малине",
+                                        Toast.LENGTH_LONG
+                                ).show();
 
-                                        Toast.makeText(
-                                                getActivity(), "Ну все, хана малине",
-                                                Toast.LENGTH_LONG
-                                        ).show();
-
-                                    }
-                                })
-                                .setNegativeButton("NENE ASTANAVIS", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        Toast.makeText(
-                                                getActivity(), "Ну как хош братан",
-                                                Toast.LENGTH_LONG
-                                        ).show();
-                                        dialog.cancel();
-                                    }
-                                });
-                        AlertDialog alert = builder.create();
-                        alert.setTitle("SHO");
-                        alert.show();
-
-                    }
-                };
-                btn_shutdown.setOnClickListener(myShutdownListener);
-
-                View.OnClickListener myRebootListener = new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        command = "sudo shutdown -r now";
-                        question = "РЕБУТАЕМ НАХ?";
-
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                        builder.setMessage(question)
-                                .setPositiveButton("DA EBA KANESHNO", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-
-                                        Functions.sshSentCmd(login, ip, pass, command); //Запуск метода отправки команды по ssh
-
-                                        Toast.makeText(
-                                                getActivity(), "Ну все, хана малине",
-                                                Toast.LENGTH_LONG
-                                        ).show();
-
-                                    }
-                                })
-                                .setNegativeButton("NENE ASTANAVIS", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        Toast.makeText(
-                                                getActivity(), "Ну как хош братан",
-                                                Toast.LENGTH_LONG
-                                        ).show();
-                                        dialog.cancel();
-                                    }
-                                });
-                        AlertDialog alert = builder.create();
-                        alert.setTitle("SHO");
-                        alert.show();
-
-                    }
-                };
-
-                btn_reboot.setOnClickListener(myRebootListener);
-
+                            }
+                        })
+                        .setNegativeButton("NENE ASTANAVIS", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(
+                                        getActivity(), "Ну как хош братан",
+                                        Toast.LENGTH_LONG
+                                ).show();
+                                dialog.cancel();
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.setTitle("SHO");
+                alert.show();
 
             }
-        }).start();
+        };
+        btn_shutdown.setOnClickListener(myShutdownListener);
+
+        View.OnClickListener myRebootListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                command = "sudo shutdown -r now";
+                question = "РЕБУТАЕМ НАХ?";
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage(question)
+                        .setPositiveButton("DA EBA KANESHNO", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                Functions.sshSentCmd(login, ip, pass, command); //Запуск метода отправки команды по ssh
+
+                                Toast.makeText(
+                                        getActivity(), "Ну все, хана малине",
+                                        Toast.LENGTH_LONG
+                                ).show();
+
+                            }
+                        })
+                        .setNegativeButton("NENE ASTANAVIS", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(
+                                        getActivity(), "Ну как хош братан",
+                                        Toast.LENGTH_LONG
+                                ).show();
+                                dialog.cancel();
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.setTitle("SHO");
+                alert.show();
+
+            }
+        };
+        btn_reboot.setOnClickListener(myRebootListener);
 
     }
 }

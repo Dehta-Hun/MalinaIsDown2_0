@@ -1,4 +1,6 @@
-package com.example.malinaisdown2_0.ui;
+package com.example.malinaisdown2_0;
+
+import android.view.View;
 
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
@@ -14,12 +16,15 @@ public class Functions {
     private static ChannelExec channelSsh;
 
 
-    public static void sshSentCmd(final String login, final String ip, final String pass, final String command) {
+
+
+    public static void  sshSentCmd(final String login, final String ip, final String pass, final String command) {
         new Thread(new Runnable() {
             @Override
             public void run() {
 
                 try {
+
                     jsch = new JSch();
                     session = jsch.getSession(login, ip, 22);
                     session.setPassword(pass);
@@ -39,8 +44,10 @@ public class Functions {
                     channelSsh.connect();
                     channelSsh.disconnect();
 
-                } catch (Exception e) {
+
+                } catch (com.jcraft.jsch.JSchException e) {
                     e.printStackTrace();
+
                 }
             }
         }).start();
