@@ -14,10 +14,10 @@ import androidx.fragment.app.Fragment;
 
 import com.example.malinaisdown2_0.Functions;
 import com.example.malinaisdown2_0.R;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.Session;
 
-import java.util.Properties;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class LoginFragment extends Fragment {
 
@@ -31,6 +31,7 @@ public class LoginFragment extends Fragment {
     public static final String stringlogin = "saved";
     public static final String stringip = "ALOLO";
     public static final String stringpass = "sdsd";
+    Functions.SshTestConnection ssh;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -42,7 +43,6 @@ public class LoginFragment extends Fragment {
         textPassword = loginView.findViewById(R.id.textPassword);
         textCheck = loginView.findViewById(R.id.connectCheck);
         btnCheck = loginView.findViewById(R.id.btnConnectionTest);
-
 
         mSettings = this.getActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
 
@@ -64,7 +64,7 @@ public class LoginFragment extends Fragment {
         String savedpass = mSettings.getString(stringpass, "");
         textPassword.setText(savedpass);
 
-        sshConnectionCheck(textLogin.getText().toString(), textIp.getText().toString(), textPassword.getText().toString());
+        executeCheckShow(300);
     }
 
     @Override
@@ -95,53 +95,35 @@ public class LoginFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Functions.hideKeyboard(getActivity());
-                sshConnectionCheck(textLogin.getText().toString(), textIp.getText().toString(), textPassword.getText().toString());
-
+                executeCheckShow(5000);
             }
         };
         btnCheck.setOnClickListener(myCheckListener);
+
     }
 
-    public void sshConnectionCheck(final String login, final String ip, final String password) {
+    public  void executeCheckShow(int timeoutMS) {
+        ssh = new Functions.SshTestConnection();
+        ssh.execute(textLogin.getText().toString(), textIp.getText().toString(), textPassword.getText().toString());
+        try {
+            showMessage(ssh.get(timeoutMS, TimeUnit.MILLISECONDS));
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        }
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                try {
-
-                    JSch jsch = new JSch();
-                    Session session = jsch.getSession(login, ip, 22);
-                    session.setPassword(password);
-
-                    // Avoid asking for key confirmation
-                    Properties prop = new Properties();
-                    prop.put("StrictHostKeyChecking", "no");
-                    session.setConfig(prop);
-
-                    session.connect();
-
-                    getActivity().runOnUiThread(new Runnable() {
-                        public void run() {
-//                            Toast.makeText(getActivity(), "ок", Toast.LENGTH_SHORT).show();
-                            textCheck.setText("Подключено!");
-                            textCheck.setTextColor(getResources().getColor(R.color.greenColor));
-                        }
-                    });
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    getActivity().runOnUiThread(new Runnable() {
-                        public void run() {
-//                            Toast.makeText(getActivity(), "не ок", Toast.LENGTH_SHORT).show();
-                            textCheck.setText("Нет подключения");
-                            textCheck.setTextColor(getResources().getColor(R.color.grayColor));
-                        }
-                    });
-
-                }
-            }
-        }).start();
     }
+    public void showMessage(Boolean operator) {
+        if (operator == true) {
+            textCheck.setText("Подключено!");
+            textCheck.setTextColor(getResources().getColor(R.color.greenColor));
+        } else {
+            textCheck.setText("Нет подключения");
+            textCheck.setTextColor(getResources().getColor(R.color.grayColor));
+        }
 
+    }
 }
