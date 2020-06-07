@@ -24,6 +24,7 @@ public class ControlFragment extends Fragment{
     private Button btn_shutdown;
     private Button btn_reboot;
     private String command, question, login, ip, pass;
+    private Functions.sshSentCmd sshConnection;
 
 
     public static final String APP_PREFERENCES = "mysettings";
@@ -65,7 +66,8 @@ public class ControlFragment extends Fragment{
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
-                                Functions.sshSentCmd(login, ip, pass, command); //Запуск метода отправки команды по ssh
+                                sshConnection = new Functions.sshSentCmd();
+                                sshConnection.execute(login, ip, pass, command); //Запуск метода отправки команды по ssh
 
                                 Toast.makeText(
                                         getActivity(), "Ну все, хана малине",
@@ -105,7 +107,8 @@ public class ControlFragment extends Fragment{
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
-                                Functions.sshSentCmd(login, ip, pass, command); //Запуск метода отправки команды по ssh
+                                sshConnection = new Functions.sshSentCmd();
+                                sshConnection.execute(login, ip, pass, command); //Запуск метода отправки команды по ssh
 
                                 Toast.makeText(
                                         getActivity(), "Ну все, хана малине",
